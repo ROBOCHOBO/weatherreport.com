@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous"> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous"> -->
+    <title>WeatherApp</title>
+</head>
+<!-- css part -->
+<style>
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body{
+    background: url(bg4.jpeg);
+    height: 100vh;
+    /* width: 100%; */
+    overflow: hidden;
+    background-repeat:no-repeat;
+    background-position: top center;
+    font-family: Arial, Helvetica, sans-serif;
+    background-size: cover;
+}
+.app-main{
+    width: 50vh;
+    margin: 100px auto;
+    background-color: rgba(240,248,255,0.6);
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+}
+.app-main >*{
+    margin-bottom: 20px;
+
+}
+.input-box{
+    width: 100%;
+    background-color: rgba(255,255,255,0.6);
+    /* border: none; */
+    outline: none;
+    color: black;
+    font-size: 25px;
+    height: 50px;
+    border-radius: 5px;
+    padding:0 10px;
+    text-align: center;
+    border: 2px dotted black;
+    /* outline: 2px solid red; */
+    /* outline-offset: -10px; */
+
+
+}
+.input-box:hover{
+    background-color: rgba(255,255,255);
+}
+.weather-body{
+    display: none;
+    color: yellowgreen;
+    padding: 30px;
+    line-height: 2rem;
+    border-radius: 10px;
+    /* background-color: rgba(255,255,255,0.6); */
+    background-color: white;
+    height: 60vh;
+    border: 2px dotted black;
+    opacity: 0.8;
+    /* outline: 2px dotted red; */
+    /* outline-offset: -10px; */
+}
+.location-details{
+    font-weight: bold;
+
+}
+.weather-status{
+    padding: 20px;
+}
+.temp{
+    font-size: 40pt;
+    font-weight: 700;
+    margin: 20px 0;
+    text-shadow: 2px 4px black;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+}
+.min-max, .weather{
+    font-size: 15pt;
+    font-weight: 600;
+
+}
+
+.horLine{
+    border: 1px dashed black;
+    width: 65%;
+    margin-left: 55px;
+}
+#im{
+    height:60px;
+    width:60px;
+    margin-top: 20px;
+    
+}
+#wind{
+    float: left;
+    /* margin-left: 40px; */
+    margin-top: 20px;
+    
+}
+#humidity{
+    float: left;
+    margin-left:150px;
+    margin-top: 20px;
+    
+
+}
+.container{
+    /* margin: 10px; */
+    position: absolute;
+}
+</style>
+<!-- structuring Part -->
+<body>
+ 
+    <div class="app-main">
+        <div class="searchInput">
+            <input type="text" id="input-box" class="input-box" placeholder="Enter City Name" autocomplete="off">
+        </div>
+        <div class="weather-body">
+            <div class="location-details">
+                <div class="city" id="city">City,Country</div>
+                <div class="date" id="date">Current Date</div>               
+            </div>
+
+            <div class="weather-status">
+                <div class="temp" id="temp">00&deg;C</div>
+                <hr class="horLine">
+                <!-- <div class="min-max" id="min-max">32&deg;C (min) / 34&deg;C (max)</div> -->
+                <div class="min-max" id="min-max"> Temp (min) / Temp (max)</div>
+
+                <div class="weather" id="weather">Weather</div>
+                <div class="weather-descp" id="weather-descp">Short description</div>
+                <div class="img" id="img">
+                    
+                    <img id="im" src="snow.jpg">
+                </div>
+              <div class="container">
+                <div class="wind"  id="wind"><img src = "windicon.png"height="40px"width="40px">
+                    <div class="windOpt"  id="windOpt">0.00 km/hr</div>
+                
+                </div>
+
+                <div class="humidity"  id="humidity"><img src = "humidityicon.png" height ="40px"width="40px">
+                    <div class="humidityOpt"  id="humidityOpt">00%</div>
+                
+                </div>
+
+            </div>
+                
+            </div>
+        </div>
+    </div>
+</body>
+<!-- javaScript part -->
+<script>
+    const x = document.getElementById("im")
+    // api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
+    const weatherApi={
+        baseUrl:"https://api.openweathermap.org/data/2.5/weather",
+        key:"777be35613d253193696b6c2d7a75b1b"
+    }
+const searchInputBox = document.getElementById("input-box");
+
+searchInputBox.addEventListener('keypress', (event) => {
+    if(event.keyCode == 13){
+    console.log(searchInputBox.value);
+    
+    getWeatherReport(searchInputBox.value);
+    document.querySelector('.weather-body').style.display = "block"
+    // document.getElementById("input-box").value=""
+    searchInputBox.value=""
+    }
+});
+
+// getting weather report
+
+function getWeatherReport(city) {
+    fetch(`${weatherApi.baseUrl}?q=${city}&appid=${weatherApi.key}&units=metric`)
+    .then(weather => {
+        return weather.json();
+
+    })
+    .then(showWeatherReport)
+}
+
+//show Weather Report
+function showWeatherReport(weather){
+    console.log(weather);
+    let city=document.getElementById("city");
+    city.innerText = `${weather.name},${weather.sys.country}`;
+
+    let temperature = document.getElementById("temp")
+    temperature.innerHTML = `${weather.main.temp}&deg;C`;
+
+    let temperatureMinMax = document.getElementById("min-max");
+    temperatureMinMax.innerHTML = `${weather.main.temp_min}&deg;C / ${weather.main.temp_max}&deg;C`;
+
+    let weatherType = document.getElementById("weather")
+    weatherType.innerHTML =  `${weather.weather[0].main}`
+
+    let weatherDescription = document.getElementById("weather-descp")
+    weatherDescription.innerHTML =  `${weather.weather[0].description}`
+
+    // let icon = document.getElementById("img")
+    // icon.innerHTML = `${weather.weather[0].icon}`
+
+    let windSpeed = document.getElementById("windOpt")
+    windSpeed.innerHTML = `${weather.wind.speed} km/hr`
+    // windSpeed.style.fontSize="15px"
+    
+    let humidity = document.getElementById("humidityOpt")
+    humidity.innerHTML = `${weather.main.humidity}`+"%"
+    // humidity.style.fontSize="15px"
+
+
+    let date = document.getElementById("date")
+    let todayDate = new Date();
+    date.innerText=dateManage(todayDate)
+
+
+    if(weatherType.textContent == "Clear"){
+        document.body.style.backgroundImage = "url('clear.jpg')";
+        x.src = "clearicon.gif"
+    }
+    else if(weatherType.textContent == "Clouds"){
+        document.body.style.backgroundImage= "url('cloud.jpg')";
+        x.src = "cloudicon.png"
+    }
+     else if(weatherType.textContent == "Haze"){
+        document.body.style.backgroundImage = "url('sunny.jpg')";
+        x.src = "haze.png"
+    }
+    else if(weatherType.textContent == "Snow"){
+        document.body.style.backgroundImage = "url('snow.jpg')";
+        x.src = "snowicon.png"
+    }
+    else if(weatherType.textContent == "Mist"){
+        document.body.style.backgroundImage = "url('snow.jpg')";
+        x.src = "fogicon.png"
+    }
+    else if(weatherType.textContent === "Rain"){
+        document.body.style.backgroundImage = "url('kM4gQ7.jpg')";
+        x.src = "rainicon.gif"
+    }
+    else if(weatherType.textContent == "Thunderstorm"){
+        document.body.style.backgroundImage = "url('thunderstorm.jpg')";
+        x.src = "thundericon.gif"
+    }
+    };
+
+
+//date
+function dateManage(dateArg){
+    let days = ["Sunday","Monday","Tuesday","Wednesday","Thusday","Friday","Satureday"]
+    let months = ["Jan","Feb","March","April","May","June","July","Aug","Sept","Oct","Nov","Dec"]
+   
+    let year = dateArg.getFullYear();
+    let month = months[dateArg.getMonth()];
+    let date = dateArg.getDate();
+    let day = days[dateArg.getDate()];
+    // let time = dateArg.getTime();
+
+    return `${date} ${month} ${day} ${year}`;
+
+}
+
+</script>
+</html>
