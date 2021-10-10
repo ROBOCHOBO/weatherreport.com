@@ -18,6 +18,8 @@
 }
 body{
     background: url(bg4.jpeg);
+    /* background: url(images.jpg); */
+
     height: 100vh;
     /* width: 100%; */
     overflow: hidden;
@@ -59,7 +61,7 @@ body{
     background-color: rgba(255,255,255);
 }
 .weather-body{
-    display: none;
+    /* display: none; */
     color: yellowgreen;
     padding: 30px;
     line-height: 2rem;
@@ -111,7 +113,7 @@ body{
 }
 #humidity{
     float: left;
-    margin-left:150px;
+    margin-left:152px;
     margin-top: 20px;
     
 
@@ -234,7 +236,7 @@ function showWeatherReport(weather){
         document.body.style.backgroundImage = "url('clear.jpg')";
         x.src = "clearicon.gif"
     }
-    else if(weatherType.textContent == "Clouds"){
+    if(weatherType.textContent == "Clouds"){
         document.body.style.backgroundImage= "url('cloud.jpg')";
         x.src = "cloudicon.png"
     }
@@ -269,10 +271,11 @@ function dateManage(dateArg){
     let year = dateArg.getFullYear();
     let month = months[dateArg.getMonth()];
     let date = dateArg.getDate();
-    let day = days[dateArg.getDate()];
+    let day = days[dateArg.getDay()];
     // let time = dateArg.getTime();
 
     return `${date} ${month} ${day} ${year}`;
+    
 
 }
 
